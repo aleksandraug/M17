@@ -7,7 +7,7 @@
 
 import UIKit
 import SnapKit
-import Alamofire
+
 
 class ViewController: UIViewController {
     
@@ -24,13 +24,7 @@ class ViewController: UIViewController {
         return view
     }()
     
-    private let imageURLs = [
-        "https://images.unsplash.com/photo-1504595403659-9088ce801e29?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=987&q=80",
-        "https://images.unsplash.com/photo-1560743641-3914f2c45636?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=987&q=80",
-        "https://images.unsplash.com/photo-1537151608828-ea2b11777ee8?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=994&q=80",
-        "https://images.unsplash.com/photo-1583511655826-05700d52f4d9?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=988&q=80",
-        "https://images.unsplash.com/photo-1629740067905-bd3f515aa739?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=988&q=80"
-    ]
+    
     
     private var images = [UIImage]()
     
@@ -102,59 +96,6 @@ class ViewController: UIViewController {
     }
     
     
-    private func asyncGroup(){
-        let dispatchGroup = DispatchGroup()
-        
-       for i in 0...4{
-            dispatchGroup.enter()
-            asyncLoadImage(imageURL: URL(string: imageURLs[i])!,
-                           runQueue: DispatchQueue.global(),
-                           completionQueue: DispatchQueue.main)
-            {
-                result, error in
-                guard let image1 = result else {return}
-  //              self.images.append(image1)
-                dispatchGroup.leave()
-            }
-        }
-        
-        dispatchGroup.notify(queue: DispatchQueue.main){ [weak self] in
-            guard let self = self else {return}
-            self.activityIndicator.stopAnimating()
-            self.stackView.removeArrangedSubview(self.activityIndicator)
-            for i in 0...4{
- //               self.addImage(data: self.images[i])
-            }
-            
-        }
-        
-    }
-    
     
 }
-
-    private extension ViewController{
-        func asyncLoadImage(
-            imageURL: URL,
-            runQueue: DispatchQueue,
-            completionQueue: DispatchQueue,
-            completion: @escaping (Data?, Error?) -> ()
-        ){
-            runQueue.async {
-                do{
-                    let data = try Data(contentsOf: imageURL)
-                    // sleep(arc4random() % 4)
-                    completionQueue.async { completion(data, nil)}
-                } catch let error {
-                    completionQueue.async { completion(nil, error) }
-                }
-            }
-        }
-        
-        func addImage(data: Data){
-            let view = UIImageView(image: UIImage(data: data))
-            view.contentMode = .scaleAspectFit
-            self.stackView.addArrangedSubview(view)
-        }
-    }
 
